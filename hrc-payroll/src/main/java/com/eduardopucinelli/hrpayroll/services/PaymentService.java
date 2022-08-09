@@ -1,29 +1,22 @@
 package com.eduardopucinelli.hrpayroll.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.eduardopucinelli.hrpayroll.entities.Payment;
 import com.eduardopucinelli.hrpayroll.entities.Worker;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.eduardopucinelli.hrpayroll.feignclients.WorkerFeignClient;
 
 @Service
 public class PaymentService {
 
-    @Value("${hrc-worker.host}")
-    private String workerHost;
+	@Autowired
+	private WorkerFeignClient workerFeignClient;
 
-    @Autowired
-    private RestTemplate restTemplate;
-    public Payment getPayment(Long workerId, Integer days) {
-        Map<String, String> uriVariables = new HashMap<>();
-        uriVariables.put("id", ""+workerId);
+	public Payment getPayment(Long workerId, Integer days) {
 
-        Worker worker = restTemplate.getForObject(workerHost + "/workers/{id}", Worker.class, uriVariables);
+		Worker worker = workerFeignClient.findById(workerId).getBody();
 
-        return new Payment(worker.getName(), worker.getDailyIncome(), days);
-    }
+		return new Payment(worker.getName(), worker.getDailyIncome(), days);
+	}
 }
