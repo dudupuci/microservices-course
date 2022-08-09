@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.eduardopucinelli.hrpayroll.entities.Worker;
 
 @Component
-@FeignClient(name = "hrc-worker", url = "localhost:8001", path = "/workers")
+@FeignClient(name = "hrc-worker", path = "/workers")
 public interface WorkerFeignClient {
 	
 	@GetMapping(value = "/{id}")
